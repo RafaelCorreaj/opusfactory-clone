@@ -1,0 +1,22 @@
+# Dependências
+node_modules/
+frontend/node_modules/
+
+# Build
+dist/
+dist-electron/
+frontend/dist/
+
+# Ambiente
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

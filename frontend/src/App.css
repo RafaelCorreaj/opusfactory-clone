@@ -1,0 +1,276 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== FUNDO COM EFEITO CARPETE/FUMAÇA ===== */
+body {
+  background-color: #0F172A;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+}
+
+/* EFEITO CARPETE/FUMAÇA (igual à imagem) */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 25%),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 30%),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 35%),
+    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 30%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Garante que o card fique acima do efeito */
+.main-card {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== CARD PRINCIPAL ===== */
+.main-card {
+  width: 100%;
+  max-width: 560px;
+  background-color: #1E293B;
+  border-radius: 28px;
+  padding: 36px;
+  border: 1px solid #334155;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== HEADER ===== */
+.app-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.app-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #F1F5F9;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.app-subtitle {
+  font-size: 14px;
+  color: #94A3B8;
+  font-weight: 400;
+}
+
+/* ===== CAIXA ÚNICA DE CONFIGURAÇÕES ===== */
+.settings-section {
+  background-color: #0F172A;  /* Fundo escuro para a caixa */
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 28px;
+  border: 1px solid #334155;
+}
+
+.settings-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #F1F5F9;
+  margin-bottom: 20px;
+}
+/* OPÇÕES LADO A LADO DENTRO DA MESMA CAIXA */
+.radio-group {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
+}
+
+.radio-option {
+  flex: 1;
+}
+
+.radio-input {
+  position: absolute;
+  opacity: 0;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 12px;
+  background-color: #1E293B;   /* Fundo do card para os botões */
+  border: 2px solid #334155;
+  border-radius: 14px;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* TEXTO NA MESMA LINHA */
+.radio-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.radio-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #F1F5F9;
+}
+
+.radio-description {
+  font-size: 14px;
+  color: #94A3B8;
+}
+
+/* Remove o indicador circular */
+.radio-indicator {
+  display: none;
+}
+
+/* Ícone */
+.radio-icon {
+  font-size: 16px;
+  color: #94A3B8;
+}
+
+/* Quando selecionado */
+.radio-input:checked + .radio-label {
+  border-color: #3B82F6;
+}
+
+/* ===== OPÇÕES LADO A LADO ===== */
+.radio-group {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
+}
+
+.radio-option {
+  flex: 1;
+}
+
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* Centraliza o conteúdo */
+  gap: 8px;
+  padding: 14px 12px;
+  background-color: #1E293B;  /* Fundo do card para os botões */
+  border: 2px solid #334155;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+/* TEXTO TUDO NA MESMA LINHA */
+.radio-text {
+  display: flex;
+  align-items: center;  /* Alinha verticalmente */
+  gap: 4px;
+  white-space: nowrap;   /* Força ficar na mesma linha */
+}
+
+.radio-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #F1F5F9;
+}
+
+.radio-description {
+  font-size: 14px;
+  color: #94A3B8;
+  font-weight: 400;
+}
+
+/* Esconde o indicador circular (não tem na imagem) */
+.radio-indicator {
+  display: none;
+}
+
+/* Ícone */
+.radio-icon {
+  font-size: 16px;
+  color: #94A3B8;
+}
+
+/* Quando selecionado - borda azul */
+.radio-input:checked + .radio-label {
+  border-color: #3B82F6;
+  background-color: #1E293B;  /* Mantém o mesmo fundo */
+}
+
+.radio-input:checked + .radio-label .radio-title {
+  color: #F1F5F9;
+}
+
+.radio-input:checked + .radio-label .radio-icon {
+  color: #3B82F6;
+}
+
+/* ===== BOTÃO PRINCIPAL MAIS ESCURO ===== */
+.primary-button {
+  width: 100%;
+  height: 52px;
+  background-color: #0F172A;  /* Mais escuro, igual ao fundo da caixa */
+  border: 2px solid #334155;
+  border-radius: 14px;
+  color: #F1F5F9;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.primary-button:hover {
+  background-color: #1A293B;
+  border-color: #3B82F6;
+}
+
+.primary-button .button-icon {
+  font-size: 18px;
+  color: #94A3B8;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 500px) {
+  .main-card {
+    padding: 24px;
+  }
+  
+  .radio-group {
+    flex-direction: column;
+  }
+  
+  .radio-label {
+    justify-content: flex-start;
+  }
+}
