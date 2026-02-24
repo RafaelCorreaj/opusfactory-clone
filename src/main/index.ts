@@ -4,10 +4,14 @@ import { promises as fs } from 'fs';
 import { Worker } from 'worker_threads';
 import { FFmpegService } from '../services/ffmpeg-service';
 import { DatabaseService } from '../services/database';
+import { CacheService } from '../services/cache-service';
 
+const cacheService = new CacheService();
 const ffmpegService = new FFmpegService();
 const db = new DatabaseService();
 let mainWindow: BrowserWindow | null = null;
+
+
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -51,6 +55,7 @@ function startQueueProcessing() {
       }
 
       activeWorkers++;
+      
       const worker = new Worker(path.join(__dirname, '../workers/queueWorker.js'), {
         workerData: {
           queueItemId: item.id,
@@ -60,7 +65,16 @@ function startQueueProcessing() {
         }
       });
 
+      // Timeout de 30 minutos para vídeos longos
+      const timeout = setTimeout(() => {
+        worker.terminate();
+        console.error(`❌ Timeout: vídeo ${item.video_id} demorou mais de 30min`);
+        db.updateQueueItem(item.id, 'failed', 0, 'Timeout - vídeo muito longo');
+        activeWorkers--;
+      }, 30 * 60 * 1000);
+
       worker.on('message', (msg) => {
+        clearTimeout(timeout);
         activeWorkers--;
         if (mainWindow) {
           mainWindow.webContents.send('queue:update', msg);
@@ -68,6 +82,7 @@ function startQueueProcessing() {
       });
 
       worker.on('error', (err) => {
+        clearTimeout(timeout);
         activeWorkers--;
         console.error('❌ Worker error:', err);
       });
@@ -106,6 +121,27 @@ app.whenReady().then(() => {
     }
   });
 
+  // ==================== HANDLERS DE CACHE ====================
+  ipcMain.handle('cache:get-transcription', (event, videoPath) => {
+    const cachePath = cacheService.getTranscriptionCachePath(videoPath);
+    return cacheService.loadFromCache(cachePath);
+  });
+
+  ipcMain.handle('cache:save-transcription', (event, videoPath, data) => {
+    const cachePath = cacheService.getTranscriptionCachePath(videoPath);
+    cacheService.saveToCache(cachePath, data);
+  });
+
+  ipcMain.handle('cache:get-analysis', (event, videoPath) => {
+    const cachePath = cacheService.getAnalysisCachePath(videoPath);
+    return cacheService.loadFromCache(cachePath);
+  });
+
+  ipcMain.handle('cache:save-analysis', (event, videoPath, data) => {
+    const cachePath = cacheService.getAnalysisCachePath(videoPath);
+    cacheService.saveToCache(cachePath, data);
+  });
+
   // ==================== HANDLERS DO BANCO ====================
   ipcMain.handle('db:save-video', async (event, video) => db.saveVideo(video));
   ipcMain.handle('db:save-clip', async (event, clip) => db.saveClip(clip));
@@ -128,7 +164,7 @@ app.whenReady().then(() => {
     try {
       return await ffmpegService.getDuration(videoPath);
     } catch (error) {
-      console.error('❌ Erro no ffmpeg:get-duration:', error);
+      console.error('Erro no ffmpeg:get-duration:', error);
       throw error;
     }
   });
@@ -154,6 +190,10 @@ app.whenReady().then(() => {
   ipcMain.handle('ffmpeg:cut-clip', async (event, videoPath, start, end, outputPath, resolution) => 
     ffmpegService.cutClip(videoPath, start, end, outputPath, resolution)
   );
+
+  ipcMain.handle('ffmpeg:cut-clip-with-crop', async (event, videoPath, start, end, outputPath, crop) => {
+  return await ffmpegService.cutClipWithCrop(videoPath, start, end, outputPath, crop);
+  });
 
   ipcMain.handle('ffmpeg:generate-thumbnail', async (event, videoPath, time, outputPath) => 
     ffmpegService.generateThumbnail(videoPath, time, outputPath)
